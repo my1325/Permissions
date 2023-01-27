@@ -197,7 +197,9 @@ extension PermissionAlertController: PermissionAlertCellDelegate {
     }
     
     public func requestAuthorizationIfNeeded(_ permission: Permissions, status: PermissionStatus, at indexPath: IndexPath) {
-        permission.requestAuthorizionWithCallback(self, redirectToSettingsIfDenied: configuration.redirectToSettingsIfDenied) { [weak self] newStatus in
+        permission.requestAuthorizionWithCallback(self,
+                                                  shouldRedirectToSettingsWhenNotDeterminedStatus: configuration.shouldRedirectToSettingsWhenNotDeterminedStatus,
+                                                  redirectToSettingsIfDenied: configuration.redirectToSettingsIfDenied) { [weak self] newStatus in
             if status != newStatus {
                 if newStatus == .authorized, self?.configuration.filterAuthorized == true {
                     self?.reprepareData()

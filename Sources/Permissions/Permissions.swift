@@ -183,18 +183,21 @@ public extension Permissions {
         }
     }
 
-    func requestAuthorizionWithCallback(_ from: UIViewController? = nil, redirectToSettingsIfDenied redirectToSettings: Bool = true, _ callback: @escaping (PermissionStatus) -> Void) {
-        let _callBack: (URL?, PermissionStatus) -> Void = { URL, status in
+    func requestAuthorizionWithCallback(_ from: UIViewController? = nil,
+                                        shouldRedirectToSettingsWhenNotDeterminedStatus redirectToSettingsIfNotDetermined: Bool = false,
+                                        redirectToSettingsIfDenied redirectToSettings: Bool = true,
+                                        callback: @escaping (PermissionStatus) -> Void) {
+        let _callBack: (Bool, URL?, PermissionStatus) -> Void = { isNotDetermined, URL, status in
             DispatchQueue.main.async {
-                if status == .denied, redirectToSettings {
+                if status == .denied, redirectToSettings, (!isNotDetermined || redirectToSettingsIfNotDetermined) {
                     self.showAlertAndRedirectToURL(URL, from: from)
                 }
                 callback(status)
             }
         }
         
-        let setttingURLCallback: (PermissionStatus) -> Void = {
-            _callBack(URL(string: UIApplication.openSettingsURLString), $0)
+        let setttingURLCallback: (Bool, PermissionStatus) -> Void = {
+            _callBack($0, URL(string: UIApplication.openSettingsURLString), $1)
         }
         
         if #available(iOS 14.0, *), self == .appTracking {
@@ -210,7 +213,7 @@ public extension Permissions {
         case .calendarReminder: requestCalendar(.reminder, completion: setttingURLCallback)
         case .notification:
             if #available(iOS 16.0, *) {
-                requestNotification({ _callBack(URL(string: UIApplication.openNotificationSettingsURLString), $0) })
+                requestNotification({ _callBack($0, URL(string: UIApplication.openNotificationSettingsURLString), $1) })
             } else {
                 requestNotification(setttingURLCallback)
             }
@@ -218,7 +221,7 @@ public extension Permissions {
         }
     }
     
-    private func showAlertAndRedirectToURL(_ url: URL?, from viewController: UIViewController? = nil) {
+    private func showAlertAndRedirectToURL(_ url: URL?, from viewController: UIViewController?) {
         let alertController = UIAlertController(title: "", message: infoDescription, preferredStyle: .alert)
         alertController.addAction(.init(title: NSLocalizedString("Cancel", comment: ""), style: .destructive))
         alertController.addAction(.init(title: NSLocalizedString("Confirm", comment: ""), style: .default, handler: { _ in
@@ -301,99 +304,101 @@ extension Permissions {
 
 extension Permissions {
     
-    public func requestLocation(_ completion: @escaping (PermissionStatus) -> Void) {
+    func requestLocation(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = locationPermission()
         switch status {
         case .notDetermined:
-            Permissions.store.locationAuthorizationCallback = completion
+            Permissions.store.locationAuthorizationCallback = {
+                completion(true, $0)
+            }
             let locationManager = Permissions.store.locationManager
             locationManager.requestWhenInUseAuthorization()
             locationManager.requestAlwaysAuthorization()
         default:
-            completion(status)
+            completion(false, status)
         }
     }
     
-    func requestPhoto(_ completion: @escaping (PermissionStatus) -> Void) {
+    func requestPhoto(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = photoPermission()
         switch status {
         case .notDetermined:
             if #available(iOS 14.0, *) {
                 PHPhotoLibrary.requestAuthorization(for: .readWrite, handler: { _ in
-                    completion(self.photoPermission())
+                    completion(true, self.photoPermission())
                 })
             } else {
                 PHPhotoLibrary.requestAuthorization { _ in
-                    completion(self.photoPermission())
+                    completion(true, self.photoPermission())
                 }
             }
-        default: completion(status)
+        default: completion(false, status)
         }
     }
 
-    func requestContacts(_ completion: @escaping (PermissionStatus) -> Void) {
+    func requestContacts(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = contactsPersmission()
         switch contactsPersmission() {
         case .notDetermined:
             CNContactStore().requestAccess(for: .contacts, completionHandler: { _, _ in
-                completion(self.contactsPersmission())
+                completion(true, self.contactsPersmission())
             })
         default:
-            completion(status)
+            completion(false, status)
         }
     }
 
-    func requestAVDevice(_ type: AVMediaType, completion: @escaping (PermissionStatus) -> Void) {
+    func requestAVDevice(_ type: AVMediaType, completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = AVDeviceCapturePermission(type)
         switch status {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: type, completionHandler: { _ in
-                completion(self.AVDeviceCapturePermission(type))
+                completion(true, self.AVDeviceCapturePermission(type))
             })
         default:
-            completion(status)
+            completion(false, status)
         }
     }
 
     @available(iOS 14.0, *)
-    func requestAppTracking(_ completion: @escaping (PermissionStatus) -> Void) {
+    func requestAppTracking(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = appTrackingPermission()
         switch status {
         case .notDetermined:
             ATTrackingManager.requestTrackingAuthorization(completionHandler: { _ in
-                completion(self.appTrackingPermission())
+                completion(true, self.appTrackingPermission())
             })
         default:
-            completion(status)
+            completion(false, status)
         }
     }
     
-    func requestCalendar(_ type: EKEntityType, completion: @escaping (PermissionStatus) -> Void) {
+    func requestCalendar(_ type: EKEntityType, completion: @escaping (Bool, PermissionStatus) -> Void) {
         let status = calendarPermission(type)
         switch status {
         case .notDetermined:
             Permissions.store.eventStore.requestAccess(to: type, completion: { _, _ in
-                completion(self.calendarPermission(type))
+                completion(true, self.calendarPermission(type))
             })
         default:
-            completion(status)
+            completion(false, status)
         }
     }
     
-    func requestNotification(_ completion: @escaping (PermissionStatus) -> Void) {
+    func requestNotification(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            var status: PermissionStatus = settings.authorizationStatus.permissionStatus
+            let status: PermissionStatus = settings.authorizationStatus.permissionStatus
             switch status {
             case .notDetermined:
                 UNUserNotificationCenter.current().requestAuthorization(completionHandler: { authorized, _ in
                     if authorized {
-                        completion(.authorized)
+                        completion(true, .authorized)
                     } else {
-                        completion(.denied)
+                        completion(true, .denied)
                     }
                 })
             default:
-                completion(status)
+                completion(false, status)
             }
         }
     }

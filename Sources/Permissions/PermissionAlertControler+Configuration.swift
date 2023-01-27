@@ -57,13 +57,14 @@ public struct PermissionAlertConfiguration {
     public let dismissWhenAllAuthorized: Bool
     public let filterAuthorized: Bool
     public let redirectToSettingsIfDenied: Bool
-    
+    public let shouldRedirectToSettingsWhenNotDeterminedStatus: Bool
     public static let `default` = PermissionAlertConfiguration(statusButtonAttribute: nil,
                                                                infoAttribute: nil,
                                                                attribute: nil,
                                                                dismissWhenAllAuthorized: true,
                                                                filterAuthorized: true,
-                                                               redirectToSettingsIfDenied: true)
+                                                               redirectToSettingsIfDenied: true,
+                                                               shouldRedirectToSettingsWhenNotDeterminedStatus: false)
 }
 
 extension Array where Element == PermissionAlertConfiguration.Attribute {
