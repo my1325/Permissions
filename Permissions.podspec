@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
  s.name             = "Permissions"
- s.version           = "0.0.2"
+ s.version           = "0.0.3"
  s.summary         = "A light weight iOS Permission Authorization manager"
  s.homepage        = "https://github.com/my1325/Permissions.git"
  s.license            = "MIT"
@@ -9,5 +9,30 @@ Pod::Spec.new do |s|
  s.authors           = { "mayong" => "1173962595@qq.com" }
  s.source             = { :git => "https://github.com/my1325/Permissions.git", :tag => "#{s.version}" }
  s.swift_version = '5.1'
- s.source_files = 'Sources/Permissions/*.swift'
+ s.default_subspecs = 'Core'
+
+ s.subspec 'Core' do |ss|
+    ss.source_files = 'Sources/PermissionsCore/*.swift'
+ end
+
+ s.subspec 'AppTracking' do |ss|
+    ss.source_files = 'Sources/AppTracking/*.swift'
+    ss.dependency 'Permissions/Core'
+ end 
+
+ s.subspec 'Notification' do |ss|
+    ss.source_files = 'Sources/Notification/*.swift'
+    ss.dependency 'Permissions/Core'
+ end 
+
+ s.subspec 'AVDevice' do |ss|
+    ss.source_files = 'Sources/AVDevice/*.swift'
+    ss.dependency 'Permissions/Core'
+ end 
+
+ s.subspec 'PhotoLibrary' do |ss|
+    ss.source_files = 'Sources/PhotoLibrary/*.swift'
+    ss.dependency 'Permissions/Core'
+ end 
+
 end

@@ -7,7 +7,17 @@ let package = Package(
     name: "Permissions",
     platforms: [.iOS(.v12)],
     products: [
-        .library(name: "Permissions", targets: ["Permissions"]),
+        .library(name: "PermissionsCore", targets: ["PermissionsCore"]),
+        .library(name: "AVDevice", targets: ["AVDevice"]),
+        .library(name: "Notification", targets: ["Notification"]),
+        .library(name: "PhotoLibrary", targets: ["PhotoLibrary"]),
+        .library(name: "AppTracking", targets: ["AppTracking"]),
     ],
-    targets: [.target(name: "Permissions", dependencies: [])]
+    targets: [
+        .target(name: "PermissionsCore", dependencies: []),
+        .target(name: "AVDevice", dependencies: ["PermissionsCore"]),
+        .target(name: "Notification", dependencies: ["PermissionsCore"]),
+        .target(name: "PhotoLibrary", dependencies: ["PermissionsCore"]),
+        .target(name: "AppTracking", dependencies: ["PermissionsCore"]),
+    ]
 )
