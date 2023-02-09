@@ -6,12 +6,7 @@
 //  Copyright © 2023 my. All rights reserved.
 //
 
-import Contacts
-import CoreLocation
-import EventKit
-import Foundation
 import UIKit
-import UserNotifications
 
 public enum PermissionStatus {
     case unknown
@@ -101,12 +96,13 @@ extension Permissions: PermissionCompatiable {
 
     public func requestAuthorizionWithCallback(_ from: UIViewController? = nil,
                                                redirectToSettingsIfDenied redirectToSettings: Bool,
+                                               redirectToSettingsMessage message: String?,
                                                callback: @escaping (PermissionStatus) -> Void)
     {
         let _callBack: (Bool, URL?, PermissionStatus) -> Void = { isNotDetermined, URL, status in
             DispatchQueue.main.async {
                 if status == .denied, redirectToSettings, !isNotDetermined {
-                    self.showAlertAndRedirectToURL(URL, from: from)
+                    self.showAlertAndRedirectToURL(URL, from: from, message: message ?? infoDescription)
                 }
                 callback(status)
             }
@@ -119,8 +115,8 @@ extension Permissions: PermissionCompatiable {
         requestAuthorizionWithCallback(setttingURLCallback)
     }
 
-    private func showAlertAndRedirectToURL(_ url: URL?, from viewController: UIViewController?) {
-        let alertController = UIAlertController(title: "", message: infoDescription, preferredStyle: .alert)
+    private func showAlertAndRedirectToURL(_ url: URL?, from viewController: UIViewController?, message: String?) {
+        let alertController = UIAlertController(title: "Permission Denied", message: message, preferredStyle: .alert)
         alertController.addAction(.init(title: NSLocalizedString("Cancel", comment: ""), style: .destructive))
         alertController.addAction(.init(title: NSLocalizedString("Settings", comment: ""), style: .default, handler: { _ in
             if let _url = url, UIApplication.shared.canOpenURL(_url) {
