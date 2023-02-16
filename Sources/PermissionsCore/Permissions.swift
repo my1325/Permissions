@@ -19,41 +19,6 @@ public protocol PermissionStatusCompatible {
     var permissionStatus: PermissionStatus { get }
 }
 
-//extension CLAuthorizationStatus: PermissionStatusCompatible {
-//    var permissionStatus: PermissionStatus {
-//        switch self {
-//        case .restricted, .denied: return .denied
-//        case .authorized, .authorizedAlways, .authorizedWhenInUse: return .authorized
-//        case .notDetermined: return .notDetermined
-//        @unknown default: return .unknown
-//        }
-//    }
-//}
-
-//extension CNAuthorizationStatus: PermissionStatusCompatible {
-//    var permissionStatus: PermissionStatus {
-//        switch self {
-//        case .authorized: return .authorized
-//        case .notDetermined: return .notDetermined
-//        case .denied, .restricted: return .denied
-//        @unknown default: return .unknown
-//        }
-//    }
-//}
-
-//extension EKAuthorizationStatus: PermissionStatusCompatible {
-//    var permissionStatus: PermissionStatus {
-//        switch self {
-//        case .restricted, .denied: return .denied
-//        case .authorized: return .authorized
-//        case .notDetermined: return .notDetermined
-//        @unknown default: return .unknown
-//        }
-//    }
-//}
-
-
-
 public protocol PermissionCompatiable {
     var infoDescription: String? { get }
 
@@ -134,13 +99,6 @@ extension Permissions: PermissionCompatiable {
 
 //
 // extension Permissions {
-//    func locationPermission() -> PermissionStatus {
-//        if #available(iOS 14.0, *) {
-//            return Permissions.store.locationManager.authorizationStatus.permissionStatus
-//        } else {
-//            return CLLocationManager.authorizationStatus().permissionStatus
-//        }
-//    }
 //
 //    func contactsPersmission() -> PermissionStatus {
 //        CNContactStore.authorizationStatus(for: .contacts).permissionStatus
@@ -152,21 +110,6 @@ extension Permissions: PermissionCompatiable {
 // }
 //
 // extension Permissions {
-//
-//    func requestLocation(_ completion: @escaping (Bool, PermissionStatus) -> Void) {
-//        let status = locationPermission()
-//        switch status {
-//        case .notDetermined:
-//            Permissions.store.locationAuthorizationCallback = {
-//                completion(true, $0)
-//            }
-//            let locationManager = Permissions.store.locationManager
-//            locationManager.requestWhenInUseAuthorization()
-//            locationManager.requestAlwaysAuthorization()
-//        default:
-//            completion(false, status)
-//        }
-//    }
 //
 //
 //    func requestContacts(_ completion: @escaping (Bool, PermissionStatus) -> Void) {

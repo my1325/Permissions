@@ -13,6 +13,10 @@ public enum PermissionType {
     case camera
     case notification
     case photoLibrary
+    case location
+    case contact
+    case event
+    case reminder
 }
 
 public extension String {
@@ -33,6 +37,19 @@ public extension String {
                 description = info?["NSPhotoLibraryAddUsageDescription"] as? String
             }
             return description
+        case .location:
+            var description = info?["NSLocationAlwaysAndWhenInUseUsageDescription"] as? String
+            if description == nil {
+                description = info?["NSLocationWhenInUseUsageDescription"] as? String
+            }
+            if description == nil {
+                description = info?["NSLocationAlwaysUsageDescription"] as? String
+            }
+            return description
+        case .contact:
+            return info?["NSContactsUsageDescription"] as? String
+        case .event, .reminder:
+            return info?["NSCalendarsUsageDescription"] as? String
         }
     }
 }

@@ -35,4 +35,18 @@ Pod::Spec.new do |s|
     ss.dependency 'Permissions/Core'
  end 
 
+ s.subspec 'Location' do |ss|
+    ss.source_files = 'Sources/Location/*.swift'
+    ss.dependency 'Permissions/Core'
+ end
+ 
+ s.subspec 'Contact' do |ss|
+    ss.source_files = 'Sources/Contact/*.swift'
+    ss.dependency 'Permissions/Core'
+ end
+ 
+ s.subspec 'Event' do |ss|
+    ss.source_files = 'Sources/Event/*.swift'
+    ss.dependency 'Permissions/Core'
+ end
 end

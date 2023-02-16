@@ -12,6 +12,9 @@ let package = Package(
         .library(name: "Notification", targets: ["Notification"]),
         .library(name: "PhotoLibrary", targets: ["PhotoLibrary"]),
         .library(name: "AppTracking", targets: ["AppTracking"]),
+        .library(name: "Location", targets: ["Location"]),
+        .library(name: "Contact", targets: ["Contact"]),
+        .library(name: "Event", targets: ["Event"]),
     ],
     targets: [
         .target(name: "PermissionsCore", dependencies: []),
@@ -19,5 +22,8 @@ let package = Package(
         .target(name: "Notification", dependencies: ["PermissionsCore"]),
         .target(name: "PhotoLibrary", dependencies: ["PermissionsCore"]),
         .target(name: "AppTracking", dependencies: ["PermissionsCore"]),
+        .target(name: "Location", dependencies: ["PermissionsCore"]),
+        .target(name: "Contact", dependencies: ["PermissionsCore"]),
+        .target(name: "Event", dependencies: ["PermissionsCore"]),
     ]
 )
