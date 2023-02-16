@@ -44,7 +44,7 @@ public struct EventPermission: PermissionCompatiable {
         }
     }
     
-    public func requestAuthorizionWithCallback(_ callback: @escaping (Bool, PermissionsCore.PermissionStatus) -> Void) {
+    public func requestAuthorizionWithCallback(_ callback: @escaping (Bool, PermissionStatus) -> Void) {
         let status = permissionStatus
         switch status {
         case .notDetermined:
