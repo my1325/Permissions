@@ -80,10 +80,15 @@ extension Permissions: PermissionCompatiable {
         requestAuthorizionWithCallback(setttingURLCallback)
     }
 
-    private func showAlertAndRedirectToURL(_ url: URL?, from viewController: UIViewController?, message: String?) {
-        let alertController = UIAlertController(title: "Permission Denied", message: message, preferredStyle: .alert)
-        alertController.addAction(.init(title: NSLocalizedString("Cancel", comment: ""), style: .destructive))
-        alertController.addAction(.init(title: NSLocalizedString("Settings", comment: ""), style: .default, handler: { _ in
+    private func showAlertAndRedirectToURL(_ url: URL?,
+                                           title: String = "Permission Denied",
+                                           cancelTitle: String = "Cancel",
+                                           setttingTitle: String = "Settings",
+                                           message: String?,
+                                           from viewController: UIViewController?) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(.init(title: cancelTitle, style: .destructive))
+        alertController.addAction(.init(title: setttingTitle, style: .default, handler: { _ in
             if let _url = url, UIApplication.shared.canOpenURL(_url) {
                 UIApplication.shared.open(_url)
             }

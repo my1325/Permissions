@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
  s.name             = "Permissions"
- s.version           = "0.0.4"
+ s.version           = "0.0.5"
  s.summary         = "A light weight iOS Permission Authorization manager"
  s.homepage        = "https://github.com/my1325/Permissions.git"
  s.license            = "MIT"
