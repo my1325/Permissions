@@ -60,6 +60,9 @@ extension Permissions: PermissionCompatiable {
     }
 
     public func requestAuthorizionWithCallback(_ from: UIViewController? = nil,
+                                               title: String = "Permission Denied",
+                                               cancelTitle: String = "Cancel",
+                                               setttingTitle: String = "Settings",
                                                redirectToSettingsIfDenied redirectToSettings: Bool,
                                                redirectToSettingsMessage message: String?,
                                                callback: @escaping (PermissionStatus) -> Void)
@@ -67,7 +70,12 @@ extension Permissions: PermissionCompatiable {
         let _callBack: (Bool, URL?, PermissionStatus) -> Void = { isNotDetermined, URL, status in
             DispatchQueue.main.async {
                 if status == .denied, redirectToSettings, !isNotDetermined {
-                    self.showAlertAndRedirectToURL(URL, message: message ?? infoDescription, from: from)
+                    self.showAlertAndRedirectToURL(URL,
+                                                   title: title,
+                                                   cancelTitle: cancelTitle,
+                                                   setttingTitle: setttingTitle,
+                                                   message: message ?? infoDescription,
+                                                   from: from)
                 }
                 callback(status)
             }
@@ -81,9 +89,9 @@ extension Permissions: PermissionCompatiable {
     }
 
     private func showAlertAndRedirectToURL(_ url: URL?,
-                                           title: String = "Permission Denied",
-                                           cancelTitle: String = "Cancel",
-                                           setttingTitle: String = "Settings",
+                                           title: String,
+                                           cancelTitle: String,
+                                           setttingTitle: String,
                                            message: String?,
                                            from viewController: UIViewController?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
