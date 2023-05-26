@@ -67,7 +67,7 @@ extension Permissions: PermissionCompatiable {
         let _callBack: (Bool, URL?, PermissionStatus) -> Void = { isNotDetermined, URL, status in
             DispatchQueue.main.async {
                 if status == .denied, redirectToSettings, !isNotDetermined {
-                    self.showAlertAndRedirectToURL(URL, from: from, message: message ?? infoDescription)
+                    self.showAlertAndRedirectToURL(URL, message: message ?? infoDescription, from: from)
                 }
                 callback(status)
             }
